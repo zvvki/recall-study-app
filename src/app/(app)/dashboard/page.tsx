@@ -25,6 +25,8 @@ import {
   buildExamPlan,
 } from "@/lib/selectors";
 import { todayISO, formatLong, relativeDays, daysBetween } from "@/lib/date";
+import { LEARNING_TOPICS } from "@/lib/learning";
+import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader, SectionHeading, StatTile, Pill } from "@/components/bits";
 import { RingProgress, ConfidenceBar, confToken, confLabel, tokenColor } from "@/components/charts";
@@ -41,6 +43,10 @@ export default function DashboardPage() {
   const stats = analytics(state, today);
   const exam = nextExam(state, today);
   const daysUntilExam = exam ? daysBetween(today, exam.date) : 999;
+  const completedTopics = state.completedTopics ?? [];
+  const learnDone = LEARNING_TOPICS.filter((t) => completedTopics.includes(t.id)).length;
+  const learnPct = LEARNING_TOPICS.length ? Math.round((learnDone / LEARNING_TOPICS.length) * 100) : 0;
+  const nextLearn = LEARNING_TOPICS.find((t) => !completedTopics.includes(t.id)) ?? LEARNING_TOPICS[0];
   const overall = Math.round(
     state.subjects.reduce((a, s) => {
       const ts = state.topics.filter((t) => t.subjectId === s.id);
@@ -171,8 +177,36 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Right column: weak topics + progress */}
+        {/* Right column: learning + weak topics + progress */}
         <div className="space-y-6">
+          <div>
+            <SectionHeading title="Learn the theory" hint="Bite-sized lessons — start here if a topic feels fuzzy" />
+            <Link
+              href={nextLearn ? `/learning/${nextLearn.id}` : "/learning"}
+              className="group block rounded-2xl border bg-card/60 p-4 transition-colors hover:bg-card"
+            >
+              <div className="flex items-center gap-3">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/15 text-xl ring-1 ring-primary/25">
+                  {learnDone < LEARNING_TOPICS.length && nextLearn ? nextLearn.icon : "🎓"}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium">
+                    {learnDone === 0
+                      ? `Start: ${nextLearn?.title ?? "Learning"}`
+                      : learnDone < LEARNING_TOPICS.length
+                        ? `Continue: ${nextLearn?.title ?? ""}`
+                        : "All topics learned 🎉"}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{learnDone}/{LEARNING_TOPICS.length} topics complete</div>
+                </div>
+                <BookOpen className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+              </div>
+              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${Math.max(2, learnPct)}%` }} />
+              </div>
+            </Link>
+          </div>
+
           <div>
             <SectionHeading title="Weak topics" hint="Lowest confidence first" />
             <div className="space-y-2.5">
