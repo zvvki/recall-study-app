@@ -112,7 +112,7 @@ export default function DashboardPage() {
       <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="Due today" value={due.length} sub="cards to retrieve" token="chart-1" icon={Brain} />
         <StatTile label="Streak" value={`${streak.current}d`} sub={`${streak.weekly}/7 days this week`} token="chart-4" icon={Flame} />
-        <StatTile label="Retention" value={`${stats.retention}%`} sub="recall, last 14 days" token="chart-3" icon={TrendingUp} />
+        <StatTile label="Retention" value={stats.reviewsTotal ? `${stats.retention}%` : "—"} sub={stats.reviewsTotal ? "recall, last 14 days" : "no reviews yet"} token="chart-3" icon={TrendingUp} />
         <StatTile label="Focus" value={`${stats.focusMinutes}m`} sub={`${stats.focusSessions} sessions`} token="chart-2" icon={Timer} />
       </div>
 
@@ -192,7 +192,7 @@ export default function DashboardPage() {
                     <ConfidenceBar value={w.confidence} />
                   </div>
                   <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>{confLabel(w.confidence)}</span>
+                    <span>{w.started ? confLabel(w.confidence) : "Not started"}</span>
                     {w.dueCount > 0 && <Pill token="chart-1">{w.dueCount} due</Pill>}
                   </div>
                 </Link>

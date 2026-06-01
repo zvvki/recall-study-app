@@ -1,8 +1,9 @@
 // Seed / mock data. Loaded once into the store on first run, then persisted &
 // mutated locally. Swapping this for an API later means replacing `loadInitial`
 // in the repository — nothing else changes.
-import type { AppState, Card, Rating, ReviewLog } from "./types";
+import type { AppState, Card, Rating } from "./types";
 import { todayISO, addDays } from "./date";
+import { newCardDefaults } from "./srs";
 
 type CardSpec = {
   q: string;
@@ -18,21 +19,16 @@ type CardSpec = {
 
 const T = todayISO();
 
+// Cards ship as brand-new & unstudied — every card is due today, strength 0.
+// All progress (strength, streak, retention) is earned by the learner, never seeded.
 function mkCards(topicId: string, specs: CardSpec[], idPrefix = "c"): Card[] {
   return specs.map((s, i) => ({
     id: `${idPrefix}-${topicId}-${i + 1}`,
     topicId,
     question: s.q,
     answer: s.a,
-    ease: s.ease,
-    intervalDays: s.interval,
-    dueDate: addDays(T, s.due),
-    reps: s.reps,
-    lapses: 0,
-    strength: s.strength,
-    lastRating: s.last,
-    lastReviewed: s.reps > 0 ? addDays(T, -Math.max(1, s.interval)) : undefined,
-    createdAt: addDays(T, -20),
+    createdAt: T,
+    ...newCardDefaults(T),
   }));
 }
 
@@ -182,31 +178,6 @@ function buildState(): AppState {
     }
   }
 
-  // synthesise ~2 weeks of review history so analytics has signal
-  const reviews: ReviewLog[] = [];
-  const ratingPool: Rating[] = ["easy", "medium", "medium", "hard", "easy", "forgot", "medium"];
-  let r = 0;
-  const activitySet = new Set<string>();
-  for (let d = 13; d >= 0; d--) {
-    // skip a couple of days to prove "missed days are recoverable"
-    if (d === 9 || d === 4) continue;
-    const date = addDays(T, -d);
-    activitySet.add(date);
-    const n = 3 + ((d * 7) % 5); // 3–7 reviews/day, deterministic
-    for (let i = 0; i < n; i++) {
-      const card = cards[(r * 3 + i) % cards.length];
-      reviews.push({
-        id: `r-${d}-${i}`,
-        cardId: card.id,
-        topicId: card.topicId,
-        date,
-        rating: ratingPool[(r + i) % ratingPool.length],
-      });
-    }
-    r++;
-  }
-  activitySet.add(T); // studied today already (seeds the streak)
-
   return {
     subjects: [
       { id: "s-accg", name: "ACCG2000 — Managerial Accounting", color: "chart-1", createdAt: addDays(T, -20) },
@@ -214,7 +185,7 @@ function buildState(): AppState {
     ],
     topics,
     cards,
-    reviews,
+    reviews: [], // no fabricated history — every review is earned by the learner
     exams: [
       {
         id: "e-accg",
@@ -231,21 +202,8 @@ function buildState(): AppState {
         topicIds: statsTopics.map((t) => t.id),
       },
     ],
-    sessions: [
-      {
-        id: "f-1",
-        date: addDays(T, -1) + "T18:20:00",
-        topicId: "t-abc",
-        goal: "Work the Thomson ABC practical end-to-end",
-        durationMin: 25,
-        reflection: {
-          learned: "The 4-step ABC method and why traditional costing distorts.",
-          confused: "Whether to use units or driver volume in the denominator.",
-          reviewNext: "Redo activity-rate step without notes.",
-        },
-      },
-    ],
-    activityDates: Array.from(activitySet).sort(),
+    sessions: [], // no fake focus sessions
+    activityDates: [], // streak starts at 0 until the learner actually studies
   };
 }
 

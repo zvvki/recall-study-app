@@ -24,7 +24,7 @@ export default function ProgressPage() {
       <PageHeader title="Progress" subtitle="The honest view: are things actually moving to long-term memory?" />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatTile label="Retention" value={`${a.retention}%`} sub="clean recall, 14d" token="chart-3" icon={TrendingUp} />
+        <StatTile label="Retention" value={a.reviewsTotal ? `${a.retention}%` : "—"} sub={a.reviewsTotal ? "clean recall, 14d" : "no reviews yet"} token="chart-3" icon={TrendingUp} />
         <StatTile label="Reviews" value={a.reviewsTotal} sub="cards retrieved" token="chart-1" icon={Brain} />
         <StatTile label="Cards started" value={`${a.cardsStarted}/${a.cardsTotal}`} sub="in rotation" token="chart-2" icon={Target} />
         <StatTile label="Focus time" value={`${a.focusMinutes}m`} sub={`${a.focusSessions} sessions`} token="chart-4" icon={Timer} />
@@ -41,7 +41,7 @@ export default function ProgressPage() {
         <div className="rounded-2xl border bg-card/60 p-5">
           <SectionHeading title="Recall rate" hint="% answered cleanly" />
           <div className="mb-2 text-3xl font-semibold tabular-nums" style={{ color: tokenColor(confToken(a.retention)) }}>
-            {a.retention}%
+            {a.reviewsTotal ? `${a.retention}%` : "—"}
           </div>
           <Sparkline points={recallPoints.length ? recallPoints : [0]} token="chart-3" />
         </div>
