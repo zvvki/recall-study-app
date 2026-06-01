@@ -24,7 +24,7 @@ import {
   relativeExam,
   buildExamPlan,
 } from "@/lib/selectors";
-import { todayISO, formatLong, relativeDays } from "@/lib/date";
+import { todayISO, formatLong, relativeDays, daysBetween } from "@/lib/date";
 import { Button } from "@/components/ui/button";
 import { PageHeader, SectionHeading, StatTile, Pill } from "@/components/bits";
 import { RingProgress, ConfidenceBar, confToken, confLabel, tokenColor } from "@/components/charts";
@@ -40,6 +40,7 @@ export default function DashboardPage() {
   const streak = streakInfo(state, today);
   const stats = analytics(state, today);
   const exam = nextExam(state, today);
+  const daysUntilExam = exam ? daysBetween(today, exam.date) : 999;
   const overall = Math.round(
     state.subjects.reduce((a, s) => {
       const ts = state.topics.filter((t) => t.subjectId === s.id);
@@ -59,6 +60,31 @@ export default function DashboardPage() {
   return (
     <div>
       <PageHeader title={`${greet}.`} subtitle={formatLong(today)} />
+
+      {/* Cram banner — appears when an exam is close; one unmissable action */}
+      {exam && daysUntilExam <= 7 && (
+        <Link
+          href={`/recall?cram=${exam.id}`}
+          className="animate-in-up mb-5 flex items-center justify-between gap-4 rounded-2xl border border-warning/30 bg-warning/10 p-4 transition-colors hover:bg-warning/15"
+        >
+          <div className="flex items-center gap-3">
+            <span className="grid size-11 place-items-center rounded-xl bg-warning/20 ring-1 ring-warning/30">
+              <Flame className="size-5 text-warning" />
+            </span>
+            <div>
+              <div className="font-medium">
+                Cram mode for {exam.name} — {relativeExam(exam, today)}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Drill every card for this exam. Hard ones loop back until you&apos;ve locked them all in.
+              </div>
+            </div>
+          </div>
+          <span className="hidden shrink-0 items-center gap-1 rounded-lg bg-warning px-4 py-2 text-sm font-semibold text-background sm:inline-flex">
+            Start cramming <ArrowRight className="size-4" />
+          </span>
+        </Link>
+      )}
 
       {/* Next best action — the one thing, to kill decision fatigue */}
       <div className="animate-in-up relative overflow-hidden rounded-3xl border bg-card/70 p-6 sm:p-8">

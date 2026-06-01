@@ -69,6 +69,15 @@ export function dueCardsForTopic(s: AppState, topicId: string, today = todayISO(
   return s.cards.filter((c) => c.topicId === topicId && isOnOrBefore(c.dueDate, today));
 }
 
+/** Every card across an exam's topics, interleaved — the cram deck (ignores due dates). */
+export function cramCards(s: AppState, examId: string): Card[] {
+  const exam = s.exams.find((e) => e.id === examId);
+  if (!exam) return [];
+  const topicSet = new Set(exam.topicIds);
+  const cards = s.cards.filter((c) => topicSet.has(c.topicId));
+  return interleave(cards, (c) => c.topicId);
+}
+
 /** Re-order so consecutive items differ by `key` where possible (interleaving). */
 export function interleave<T>(items: T[], key: (t: T) => string): T[] {
   const buckets = new Map<string, T[]>();

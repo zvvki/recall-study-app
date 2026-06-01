@@ -18,9 +18,9 @@ type CardSpec = {
 
 const T = todayISO();
 
-function mkCards(topicId: string, specs: CardSpec[]): Card[] {
+function mkCards(topicId: string, specs: CardSpec[], idPrefix = "c"): Card[] {
   return specs.map((s, i) => ({
-    id: `c-${topicId}-${i + 1}`,
+    id: `${idPrefix}-${topicId}-${i + 1}`,
     topicId,
     question: s.q,
     answer: s.a,
@@ -131,6 +131,34 @@ const statsTopics: { id: string; name: string; note: string; cards: CardSpec[] }
   },
 ];
 
+// --- actual ACCG2000 sample-test questions, as exam-style cards ---
+const EXAM_EXTRAS: Record<string, CardSpec[]> = {
+  "t-service": [
+    { q: "Which does the service value chain include? (i) R&D (ii) Customer support (iii) Purchasing (iv) Production/Delivery", a: "i, ii and iv. Services don't purchase raw materials, so purchasing (iii) is excluded.", due: 0, strength: 30, reps: 0, ease: 2.0, interval: 1, last: "hard" },
+  ],
+  "t-relevant": [
+    { q: "Xebex makes 100,000 units: variable $300,000, direct fixed $100,000, allocated OH $50,000. Stopping cuts fixed 80%. Buy only if price is below?", a: "$3.80. Avoidable = $300,000 + (80%×$100,000=$80,000) = $380,000 ÷ 100,000 = $3.80. Allocated $50,000 is unavoidable — ignore.", due: 0, strength: 22, reps: 0, ease: 1.9, interval: 1, last: "forgot" },
+    { q: "5,000 units sell for $20 at split-off, or process further for +$20,000 and sell at $25. Joint cost $80,000. Effect of processing further?", a: "+$5,000. ($25−$20)×5,000 − $20,000 = $5,000 increase. The $80,000 joint cost is sunk — ignore it.", due: 0, strength: 28, reps: 0, ease: 1.95, interval: 1, last: "hard" },
+  ],
+  "t-constraint": [
+    { q: "X,Y,Z have CM $4/$5/$10 and need 1/1/5 machine hrs. Only 5,000 hrs; demand 1,000/3,000/2,000. Production plan?", a: "3,000 Y, 1,000 X, 200 Z. CM/hr = $4/$5/$2 → make Y (3,000h), X (1,000h), then 1,000h left ÷5 = 200 Z.", due: 0, strength: 25, reps: 0, ease: 1.9, interval: 1, last: "hard" },
+  ],
+  "t-costing": [
+    { q: "Unit costs: DM $40, DL $30, var OH $2, fixed OH $5. Unit product cost under VARIABLE costing?", a: "$72 (40+30+2). Fixed OH $5 is a period cost, excluded. Absorption would be $77.", due: 0, strength: 35, reps: 0, ease: 2.0, interval: 1, last: "hard" },
+  ],
+  "t-abc": [
+    { q: "ABC characteristics: more bases than traditional? more accurate drivers? simpler?", a: "More bases AND more accurate drivers — both true. NOT simpler (ABC is more complex/costly).", due: 0, strength: 30, reps: 0, ease: 2.0, interval: 1, last: "hard" },
+    { q: "ABC practical: total OH $912,000 on 40,000 DLH. Plant-wide rate, then LEC40 (0.4h) & LEC90 (0.8h) OH/unit?", a: "Rate = 912,000÷40,000 = $22.80/DLH. LEC40 OH = 0.4×22.80 = $9.12; LEC90 = 0.8×22.80 = $18.24.", due: 0, strength: 20, reps: 0, ease: 1.85, interval: 1, last: "forgot" },
+  ],
+  "t-support": [
+    { q: "S2 ($30,000) allocated by space. S1 1,000; P1 20,000; P2 30,000; P3 50,000 sq m. Direct-method cost to P2?", a: "$9,000. Direct method ignores S1: $30,000 × (30,000 ÷ 100,000) = $9,000.", due: 0, strength: 24, reps: 0, ease: 1.9, interval: 1, last: "hard" },
+  ],
+  "t-budget": [
+    { q: "May sales 1,575; April ending inv 315; May ending inv 412. Units to purchase in May?", a: "1,672 = 1,575 + 412 − 315 (purchases = sales + ending − beginning).", due: 0, strength: 33, reps: 0, ease: 2.0, interval: 1, last: "hard" },
+    { q: "June sales 1,650; ending 425; beginning 412; cost $125/unit. June purchases budget ($)?", a: "$207,875. Units = 1,650 + 425 − 412 = 1,663 × $125 = $207,875.", due: 0, strength: 33, reps: 0, ease: 2.0, interval: 1, last: "hard" },
+  ],
+};
+
 function buildState(): AppState {
   const cards: Card[] = [];
   const topics: AppState["topics"] = [];
@@ -150,6 +178,7 @@ function buildState(): AppState {
         createdAt: addDays(T, -20),
       });
       cards.push(...mkCards(t.id, t.cards));
+      cards.push(...mkCards(t.id, EXAM_EXTRAS[t.id] ?? [], "cx"));
     }
   }
 

@@ -137,9 +137,9 @@ export const useStore = create<Store>()(
       resetToSeed: () => set({ ...SEED }),
     }),
     {
-      name: "recall-store-v1",
+      name: "recall-store-v2",
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
     }
   )
 );
