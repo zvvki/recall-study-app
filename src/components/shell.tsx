@@ -13,6 +13,7 @@ import {
   GraduationCap,
   BookOpen,
   ListChecks,
+  ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/lib/store";
@@ -23,6 +24,7 @@ const NAV = [
   { href: "/learning", label: "Learning", icon: BookOpen },
   { href: "/recall", label: "Recall", icon: Brain },
   { href: "/quiz", label: "Quizzes", icon: ListChecks },
+  { href: "/test", label: "Mock Test", icon: ClipboardCheck },
   { href: "/focus", label: "Focus", icon: Timer },
   { href: "/subjects", label: "Subjects", icon: Layers },
   { href: "/planner", label: "Planner", icon: CalendarRange },
