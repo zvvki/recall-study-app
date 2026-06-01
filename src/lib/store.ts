@@ -34,6 +34,7 @@ interface Actions {
   deleteExam: (examId: string) => void;
   logFocusSession: (s: Omit<FocusSession, "id" | "date">) => void;
   markStudiedToday: () => void;
+  addXp: (n: number) => void;
   resetToSeed: () => void;
 }
 
@@ -132,6 +133,17 @@ export const useStore = create<Store>()(
           return state.activityDates.includes(today)
             ? state
             : { activityDates: [...state.activityDates, today] };
+        }),
+
+      addXp: (n) =>
+        set((state) => {
+          const today = todayISO();
+          return {
+            xp: (state.xp ?? 0) + n,
+            activityDates: state.activityDates.includes(today)
+              ? state.activityDates
+              : [...state.activityDates, today],
+          };
         }),
 
       resetToSeed: () => set({ ...SEED }),

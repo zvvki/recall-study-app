@@ -79,4 +79,6 @@ export interface AppState {
   sessions: FocusSession[];
   /** ISO dates (yyyy-mm-dd) on which the learner studied — powers streaks */
   activityDates: string[];
+  /** total XP earned from guided lessons (correct answers / completed screens) */
+  xp: number;
 }

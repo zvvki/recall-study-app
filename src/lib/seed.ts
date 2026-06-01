@@ -204,6 +204,7 @@ function buildState(): AppState {
     ],
     sessions: [], // no fake focus sessions
     activityDates: [], // streak starts at 0 until the learner actually studies
+    xp: 0,
   };
 }
 
