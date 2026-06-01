@@ -22,6 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { PageHeader, Pill } from "@/components/bits";
+import { TopicNotes } from "@/components/topic-notes";
 import { RingProgress, ConfidenceBar, confToken, confLabel, tokenColor } from "@/components/charts";
 
 export default function TopicPage() {
@@ -73,6 +74,8 @@ export default function TopicPage() {
           </Button>
         </div>
       </div>
+
+      <TopicNotes topicId={id} />
 
       <div className="space-y-2.5">
         {cards.map((c) => (
