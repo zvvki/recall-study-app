@@ -35,6 +35,7 @@ interface Actions {
   logFocusSession: (s: Omit<FocusSession, "id" | "date">) => void;
   markStudiedToday: () => void;
   addXp: (n: number) => void;
+  completeTopic: (topicId: string) => void;
   resetToSeed: () => void;
 }
 
@@ -144,6 +145,14 @@ export const useStore = create<Store>()(
               ? state.activityDates
               : [...state.activityDates, today],
           };
+        }),
+
+      completeTopic: (topicId) =>
+        set((state) => {
+          const done = state.completedTopics ?? [];
+          return done.includes(topicId)
+            ? state
+            : { completedTopics: [...done, topicId] };
         }),
 
       resetToSeed: () => set({ ...SEED }),

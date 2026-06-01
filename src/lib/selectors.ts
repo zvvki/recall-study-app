@@ -268,7 +268,7 @@ export function todayPlan(s: AppState, today = todayISO()): TodayItem[] {
           kind: "learn",
           title: `Learn: ${b.topicName}`,
           subtitle: `First pass before ${exam.name}`,
-          href: `/learn/${b.topicId}`,
+          href: `/learning/${b.topicId}`,
           done: topicStarted(s, b.topicId),
           accent: b.subjectColor,
         });

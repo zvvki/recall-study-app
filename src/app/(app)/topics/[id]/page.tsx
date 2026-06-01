@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Plus, Brain, ArrowLeft, Trash2, ChevronDown, BookOpen } from "lucide-react";
-import { hasLesson } from "@/lib/lessons";
+import { getLearnTopic } from "@/lib/learning";
 import { useStore } from "@/lib/store";
 import { topicCards, topicConfidence, dueCardsForTopic } from "@/lib/selectors";
 import { RATING_META } from "@/lib/srs";
@@ -70,12 +70,12 @@ export default function TopicPage() {
         </div>
         <div className="flex items-center gap-2">
           <AddCardDialog topicId={id} />
-          {hasLesson(id) && (
+          {getLearnTopic(id) && (
             <Button asChild>
-              <Link href={`/learn/${id}`}><BookOpen className="size-4" /> Learn</Link>
+              <Link href={`/learning/${id}`}><BookOpen className="size-4" /> Learn</Link>
             </Button>
           )}
-          <Button asChild variant={hasLesson(id) ? "outline" : "default"} disabled={cards.length === 0}>
+          <Button asChild variant={getLearnTopic(id) ? "outline" : "default"} disabled={cards.length === 0}>
             <Link href={`/recall?topic=${id}`}><Brain className="size-4" /> Drill</Link>
           </Button>
         </div>

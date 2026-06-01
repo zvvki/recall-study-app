@@ -11,6 +11,7 @@ import {
   LineChart,
   Flame,
   GraduationCap,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/lib/store";
@@ -18,9 +19,10 @@ import { streakInfo } from "@/lib/selectors";
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/subjects", label: "Subjects", icon: Layers },
+  { href: "/learning", label: "Learning", icon: BookOpen },
   { href: "/recall", label: "Recall", icon: Brain },
   { href: "/focus", label: "Focus", icon: Timer },
+  { href: "/subjects", label: "Subjects", icon: Layers },
   { href: "/planner", label: "Planner", icon: CalendarRange },
   { href: "/progress", label: "Progress", icon: LineChart },
 ];
@@ -122,7 +124,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-6 border-t bg-background/90 glass lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-7 border-t bg-background/90 glass lg:hidden">
         {NAV.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);

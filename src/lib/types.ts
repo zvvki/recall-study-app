@@ -81,4 +81,6 @@ export interface AppState {
   activityDates: string[];
   /** total XP earned from guided lessons (correct answers / completed screens) */
   xp: number;
+  /** ids of Learning topics the student has completed at least once */
+  completedTopics: string[];
 }
