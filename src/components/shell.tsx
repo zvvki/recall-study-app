@@ -12,6 +12,7 @@ import {
   Flame,
   GraduationCap,
   BookOpen,
+  ListChecks,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/lib/store";
@@ -21,6 +22,7 @@ const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/learning", label: "Learning", icon: BookOpen },
   { href: "/recall", label: "Recall", icon: Brain },
+  { href: "/quiz", label: "Quizzes", icon: ListChecks },
   { href: "/focus", label: "Focus", icon: Timer },
   { href: "/subjects", label: "Subjects", icon: Layers },
   { href: "/planner", label: "Planner", icon: CalendarRange },
@@ -124,7 +126,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-7 border-t bg-background/90 glass lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 flex overflow-x-auto border-t bg-background/90 glass lg:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {NAV.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
@@ -133,7 +135,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium",
+                "flex min-w-[4.25rem] flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium",
                 active ? "text-primary" : "text-muted-foreground"
               )}
             >
