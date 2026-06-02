@@ -212,6 +212,51 @@ function genConstrained(): TestMCQ {
   };
 }
 
+function genPlantwideRate(): TestMCQ {
+  const totalDLH = pick([25000, 30000, 40000, 50000]);
+  const rate = pick([12, 15, 18, 20, 14.4, 22.8]);
+  const totalOH = Math.round(rate * totalDLH);
+  const correct = +(totalOH / totalDLH).toFixed(2);
+  const { options, answer } = numericMCQ(correct, [+(rate * 2).toFixed(2), +(rate / 2).toFixed(2), +(rate + 4).toFixed(2)], money2);
+  return {
+    topic: "Activity-based costing",
+    question: `Total manufacturing overhead is ${money0(totalOH)} and is applied on direct labour hours. The factory works ${num(totalDLH)} direct labour hours. What is the plant-wide overhead rate?`,
+    options,
+    answer,
+    explain: `Plant-wide rate = total overhead ÷ total DLH = ${money0(totalOH)} ÷ ${num(totalDLH)} = ${money2(correct)} per DLH.`,
+  };
+}
+
+function genABCApplied(): TestMCQ {
+  const R = pick([8, 10, 12, 46, 65, 50]);
+  const D = pick([600, 800, 1600, 1750, 2000, 8400]);
+  const correct = R * D;
+  const { options, answer } = numericMCQ(correct, [R + D, Math.round((R * D) / 2), Math.round(D / R)], money0);
+  return {
+    topic: "Activity-based costing",
+    question: `Under ABC, an activity has a rate of ${money2(R)} per driver unit. A product consumes ${num(D)} units of that driver. How much overhead from this activity is applied to the product?`,
+    options,
+    answer,
+    explain: `Applied overhead = activity rate × driver usage = ${money2(R)} × ${num(D)} = ${money0(correct)}.`,
+  };
+}
+
+function genABCUnitCost(): TestMCQ {
+  const units = pick([10000, 20000, 60000]);
+  const ohUnit = pick([5, 8, 13, 30, 6]);
+  const ohTotal = ohUnit * units;
+  const DM = ri(20, 55), DL = ri(5, 15);
+  const correct = +(DM + DL + ohUnit).toFixed(2);
+  const { options, answer } = numericMCQ(correct, [DM + DL, +(DM + DL + ohUnit * 2).toFixed(2), ohUnit], money2);
+  return {
+    topic: "Activity-based costing",
+    question: `Under ABC a product is assigned ${money0(ohTotal)} of overhead across ${num(units)} units. Direct materials are ${money0(DM)} and direct labour ${money0(DL)} per unit. What is its ABC unit cost?`,
+    options,
+    answer,
+    explain: `Overhead per unit = ${money0(ohTotal)} ÷ ${num(units)} = ${money2(ohUnit)}. Unit cost = ${money0(DM)} + ${money0(DL)} + ${money2(ohUnit)} = ${money2(correct)}.`,
+  };
+}
+
 // ---- conceptual pool ------------------------------------------------------
 const CONCEPTUAL: TestMCQ[] = [
   { topic: "Service costing", question: "A firm with high contact time and very few customers is a…", options: ["Professional service firm", "Service shop", "Mass service firm", "Manufacturer"], answer: 0, explain: "High contact + low volume + custom = professional service firm." },
@@ -321,21 +366,25 @@ function genPractical(): Practical {
 
 // ---- assemble a full mock test --------------------------------------------
 export function buildMockTest(): MockTest {
-  // 10 generated numeric questions (some generators twice with fresh numbers)
+  // ACTIVITY-BASED COSTING is heavily weighted (the tutor flagged it): 3 ABC
+  // numeric questions every test, plus ABC concept questions in the pool, plus
+  // the ABC practical in Part B.
+  const abc: TestMCQ[] = [
+    genPlantwideRate(),
+    genABCRate(),
+    pick([genABCApplied, genABCUnitCost])(),
+  ];
   const generated: TestMCQ[] = [
     genMakeOrBuy(),
     genPurchasesUnits(),
     genPurchasesDollars(),
     genVariableCosting(),
     genSupportDirect(),
-    genABCRate(),
     genSellProcess(),
     genConstrained(),
-    genMakeOrBuy(),
-    genVariableCosting(),
   ];
-  // 6 conceptual, sampled & option-shuffled
+  // 6 conceptual, sampled & option-shuffled (pool is ABC-rich)
   const concept = shuffle(CONCEPTUAL).slice(0, 6).map(shuffleConceptual);
-  const mcqs = shuffle([...generated, ...concept]).slice(0, 16);
+  const mcqs = shuffle([...abc, ...generated, ...concept]).slice(0, 16);
   return { mcqs, practical: genPractical() };
 }

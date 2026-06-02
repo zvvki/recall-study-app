@@ -92,6 +92,25 @@ export default function DashboardPage() {
         </Link>
       )}
 
+      {/* Tutor tip — ABC heavily flagged for this exam */}
+      <div className="mb-5 rounded-2xl border border-chart-1/30 bg-chart-1/10 p-4">
+        <div className="flex items-center gap-2 text-sm font-medium">
+          <span className="text-base">📌</span> Tutor tip: <span className="text-primary">Activity-Based Costing is a big part of the test.</span>
+        </div>
+        <p className="mt-1 text-sm text-muted-foreground">Make sure ABC is rock-solid — learn it, then drill it cold.</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link href="/learning/t-abc" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/80">
+            <BookOpen className="size-3.5" /> Learn ABC
+          </Link>
+          <Link href="/recall?topic=t-abc" className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium hover:bg-accent/50">
+            <Brain className="size-3.5" /> Drill ABC cards
+          </Link>
+          <Link href="/test" className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium hover:bg-accent/50">
+            <Target className="size-3.5" /> Mock test (ABC-heavy)
+          </Link>
+        </div>
+      </div>
+
       {/* Next best action — the one thing, to kill decision fatigue */}
       <div className="animate-in-up relative overflow-hidden rounded-3xl border bg-card/70 p-6 sm:p-8">
         <div
