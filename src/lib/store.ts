@@ -41,6 +41,24 @@ interface Actions {
 
 export type Store = AppState & Actions;
 
+// --- per-profile storage --------------------------------------------------
+// Each local profile keeps its own data under `recall-data::<profileId>`.
+// Switching profile = point the storage at a different key + rehydrate.
+export const PROFILE_ACTIVE_KEY = "recall-active-profile";
+export function profileDataKey(): string {
+  if (typeof window === "undefined") return "recall-data::default";
+  return `recall-data::${localStorage.getItem(PROFILE_ACTIVE_KEY) || "default"}`;
+}
+const profileStorage = {
+  getItem: (_n: string) => (typeof window !== "undefined" ? localStorage.getItem(profileDataKey()) : null),
+  setItem: (_n: string, v: string) => {
+    if (typeof window !== "undefined") localStorage.setItem(profileDataKey(), v);
+  },
+  removeItem: (_n: string) => {
+    if (typeof window !== "undefined") localStorage.removeItem(profileDataKey());
+  },
+};
+
 export const useStore = create<Store>()(
   persist(
     (set) => ({
@@ -158,8 +176,8 @@ export const useStore = create<Store>()(
       resetToSeed: () => set({ ...SEED }),
     }),
     {
-      name: "recall-store-v3",
-      storage: createJSONStorage(() => localStorage),
+      name: "recall-store",
+      storage: createJSONStorage(() => profileStorage),
       version: 3,
     }
   )

@@ -1,13 +1,21 @@
 "use client";
 
+import { useEffect } from "react";
 import { AppShell } from "@/components/shell";
 import { useHydrated } from "@/lib/store";
+import { useProfiles } from "@/lib/profiles";
 
 export default function AppGroupLayout({ children }: { children: React.ReactNode }) {
   const hydrated = useHydrated();
+  const ready = useProfiles((s) => s.ready);
+
+  useEffect(() => {
+    useProfiles.getState().init();
+  }, []);
+
   return (
     <AppShell>
-      {hydrated ? (
+      {hydrated && ready ? (
         children
       ) : (
         <div className="space-y-4">

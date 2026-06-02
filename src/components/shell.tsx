@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useStore } from "@/lib/store";
 import { streakInfo } from "@/lib/selectors";
+import { ProfileSwitcher } from "@/components/profile-switcher";
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -89,7 +90,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="px-2">
           <Logo />
         </div>
-        <nav className="mt-8 flex flex-col gap-1">
+        <div className="mt-5">
+          <ProfileSwitcher />
+        </div>
+        <nav className="mt-5 flex flex-col gap-1">
           {NAV.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
@@ -118,6 +122,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Mobile top bar */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-background/80 glass px-4 py-3 lg:hidden">
         <Logo />
+        <ProfileSwitcher compact />
       </header>
 
       {/* Main */}
